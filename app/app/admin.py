@@ -11,6 +11,7 @@ class WebhookAdmin(admin.ModelAdmin):
     formfield_overrides = {
         fields.JSONField: {'widget': JSONEditorWidget},
     }
+
     class Meta:
         model = Webhook
 

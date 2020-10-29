@@ -16,4 +16,3 @@ class WebhookAPIView(APIView):
         Webhook.objects.create(payload=payload)
 
         return Response(status=HTTP_201_CREATED)
-
