@@ -1,13 +1,13 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-from upload.views import image_upload
+from app import views
 
 urlpatterns = [
-    path("", image_upload, name="upload"),
     path("admin/", admin.site.urls),
+    path('webhook', views.WebhookAPIView.as_view()),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
 if bool(settings.DEBUG):
