@@ -20,23 +20,17 @@ Uses the default Django development server.
 
     Test it out at [http://localhost:8000](http://localhost:8000). The "app" folder is mounted into the container and your code changes apply automatically.
 
-### Production
+### Production with mTLS
 
 #### Generate Self-sign CA certificates
-```sh
-cd nginx/certificates
-# Generate the CA Key and Certificate
-openssl req -x509 -sha256 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 356 -nodes -subj '/CN=Test Cert Authority'
-# Generate the Server Key, and Certificate and Sign with the CA Certificate
 
-openssl req -new -newkey rsa:4096 -keyout server.key -out server.csr -nodes -subj '/CN=<Your-Server-IP/domain-Name>'
-openssl x509 -req -sha256 -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
-# Generate the Client Key, and Certificate and Sign with the CA Certificate
-openssl req -new -newkey rsa:4096 -keyout client.key -out client.csr -nodes -subj '/CN=Test'
-openssl x509 -req -sha256 -days 365 -in client.csr -CA ca.crt -CAkey ca.key -set_serial 02 -out client.crt
-```
+    ```sh
+    $ chmod +x generate_certs.sh
+    $ ./generate_certs.sh
+    ```
 
-#### Uses gunicorn + nginx.
+
+#### Run containers with mTLS.
 
 1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db*. Update the environment variables.
 1. Build the images and run the containers:
@@ -45,5 +39,12 @@ openssl x509 -req -sha256 -days 365 -in client.csr -CA ca.crt -CAkey ca.key -set
     $ docker-compose -f docker-compose.prod.yml up -d --build
     ```
 
-    Test it out at [http://localhost:1337](http://localhost:1337). No mounted folders. To apply changes, the image must be re-built.
+    Test it out with mTLS at [https://127.0.0.1:1337](https://127.0.0.1:1337)
+    
+    Test it out without mTLS at [http://127.0.0.1:8000](http://127.0.0.1:8000)
+1. Use curl to test
 
+    ```sh
+    curl -X POST -H 'Content-type: application/json' --data '{"payload": { "a": "b"}}' https://127.0.0.1:1337/public-webhook/ --key nginx/certificates/client.key --cert nginx/certificates/client.crt --cacert nginx/certificates/server_ca.pem
+    curl -X POST -H 'Content-type: application/json' -H 'Authorization: Token 61c0ef4aa8b8e9b6fd95612ca57e0cd727eabbe6' --data '{"payload": { "a": "b"}}' https://127.0.0.1:1337/webhook/ --key nginx/certificates/client.key --cert nginx/certificates/client.crt --cacert nginx/certificates/server_ca.pem
+    ```

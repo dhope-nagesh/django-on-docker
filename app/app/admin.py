@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.contrib.postgres import fields
 from django_json_widget.widgets import JSONEditorWidget
+from rest_framework.authtoken.admin import TokenAdmin
 
 from app.models import Webhook
+
+
+TokenAdmin.raw_id_fields = ['user']
 
 
 class WebhookAdmin(admin.ModelAdmin):

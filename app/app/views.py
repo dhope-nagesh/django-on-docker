@@ -1,18 +1,18 @@
-import json
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 
-from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
-from rest_framework.views import APIView
-
+from .serializers import WebhookSerializer
 from .models import Webhook
 
 
-class WebhookAPIView(APIView):
+class WebhookAPIView(ModelViewSet):
+    serializer_class = WebhookSerializer
+    queryset = Webhook.objects.all()
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, )
 
-    def post(self, *args, **kwargs):
 
-        payload = self.request.data
-
-        Webhook.objects.create(payload=payload)
-
-        return Response(status=HTTP_201_CREATED)
+class PublicWebhookAPIView(ModelViewSet):
+    serializer_class = WebhookSerializer
+    queryset = Webhook.objects.all()
