@@ -1,9 +1,3 @@
-# Dockerizing Django with Postgres, Gunicorn, and Nginx
-
-## Want to learn how to build this?
-
-Check out the [post](https://testdriven.io/dockerizing-django-with-postgres-gunicorn-and-nginx).
-
 ## Want to use this project?
 
 ### Development
@@ -22,7 +16,7 @@ Uses the default Django development server.
 
 ### Production with mTLS
 
-#### Generate Self-sign CA certificates
+#### Generate Self-signed CA, server and client certificates
 
     ```sh
     $ chmod +x generate_certs.sh
@@ -48,3 +42,6 @@ Uses the default Django development server.
     curl -X POST -H 'Content-type: application/json' --data '{"payload": { "a": "b"}}' https://127.0.0.1:1337/public-webhook/ --key nginx/certificates/client.key --cert nginx/certificates/client.crt --cacert nginx/certificates/server_ca.pem
     curl -X POST -H 'Content-type: application/json' -H 'Authorization: Token 61c0ef4aa8b8e9b6fd95612ca57e0cd727eabbe6' --data '{"payload": { "a": "b"}}' https://127.0.0.1:1337/webhook/ --key nginx/certificates/client.key --cert nginx/certificates/client.crt --cacert nginx/certificates/server_ca.pem
     ```
+    
+#### View Webhook data on Django admin
+1. Login to [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin) with username = admin, password = admin

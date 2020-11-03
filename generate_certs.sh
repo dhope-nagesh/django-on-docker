@@ -1,4 +1,4 @@
-# Chage current directory to nginx/certificates
+# Change current directory to nginx/certificates
 cd nginx/certificates
 
 # Generate the CA for client Key and Certificate
